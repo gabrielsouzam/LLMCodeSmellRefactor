@@ -1,9 +1,8 @@
 package org.example.studysearch;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class SearchLog {
     private List<String> searchHistory;
@@ -58,4 +57,101 @@ public class SearchLog {
     public void setLogName(String logName) {
         this.logName = logName;
     }
+
+    public void addSearch(String searchTerm) {
+        searchHistory.add(searchTerm);
+        searchCount.put(searchTerm, searchCount.getOrDefault(searchTerm, 0) + 1);
+    }
+
+    public String getMostFrequentSearch() {
+        String mostFrequent = "";
+        int maxCount = 0;
+        for (Map.Entry<String, Integer> entry : searchCount.entrySet()) {
+            if (entry.getValue() > maxCount) {
+                maxCount = entry.getValue();
+                mostFrequent = entry.getKey();
+            }
+        }
+        return mostFrequent;
+    }
+
+    public void lockLog() {
+        isLocked = true;
+    }
+
+    public void unlockLog() {
+        isLocked = false;
+    }
+
+    public void incrementUsage() {
+        numUsages++;
+    }
+
+    @Override
+    public String toString() {
+        return "SearchLog{" +
+                "searchHistory=" + searchHistory +
+                ", searchCount=" + searchCount +
+                ", isLocked=" + isLocked +
+                ", numUsages=" + numUsages +
+                ", logName='" + logName + '\'' +
+                '}';
+    }
+
+    public List<String> getMostRecentSearches(int n) {
+        if (n > searchHistory.size()) {
+            return new ArrayList<>(searchHistory);
+        }
+        return searchHistory.subList(searchHistory.size() - n, searchHistory.size());
+    }
+
+    public double getAverageSearchLength() {
+        if (searchHistory.isEmpty()) {
+            return 0;
+        }
+        int totalLength = searchHistory.stream().mapToInt(String::length).sum();
+        return (double) totalLength / searchHistory.size();
+    }
+
+    public List<String> getSearchesByRegex(String regex) {
+        Pattern pattern = Pattern.compile(regex);
+        return searchHistory.stream()
+                .filter(search -> pattern.matcher(search).find())
+                .collect(Collectors.toList());
+    }
+
+    public void removeDuplicates() {
+        Set<String> uniqueSearches = new HashSet<>(searchHistory);
+        searchHistory.clear();
+        searchHistory.addAll(uniqueSearches);
+    }
+
+    public List<String> recommendSearches(String searchTerm) {
+        // Calcular a similaridade entre o termo de busca e todos os termos da história
+        Map<String, Double> similarities = new HashMap<>();
+        // ... implementar a lógica de cálculo de similaridade (e.g., usando TF-IDF)
+
+        // Ordenar os termos por similaridade
+        List<Map.Entry<String, Double>> sortedEntries = similarities.entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                .collect(Collectors.toList());
+
+        // Retornar os n termos mais similares
+        int n = 5; // Número de recomendações
+        List<String> recommendations = new ArrayList<>();
+        for (int i = 0; i < n && i < sortedEntries.size(); i++) {
+            recommendations.add(sortedEntries.get(i).getKey());
+        }
+        return recommendations;
+    }
+
+    public boolean hasSearchOccurred(String searchTerm) {
+        return searchHistory.contains(searchTerm);
+    }
+
+    public int getUniqueSearches() {
+        return searchCount.size();
+    }
+
 }
