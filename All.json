@@ -1,7 +1,7 @@
 {
   "formatVersion": 0,
   "pmdVersion": "7.9.0",
-  "timestamp": "2025-01-09T20:08:53.779-03:00",
+  "timestamp": "2025-01-09T20:41:45.577-03:00",
   "files": [
     {
       "filename": ".\\src\\main\\java\\org\\example\\studycards\\LeitnerSystem.java",
@@ -32,22 +32,6 @@
           "ruleset": "Design",
           "priority": 3,
           "externalInfoUrl": "https://docs.pmd-code.org/pmd-doc-7.9.0/pmd_rules_java_design.html#excessiveparameterlist"
-        }
-      ]
-    },
-    {
-      "filename": ".\\src\\main\\java\\org\\example\\studymaterial\\Reference.java",
-      "violations": [
-        {
-          "beginline": 3,
-          "begincolumn": 17,
-          "endline": 3,
-          "endcolumn": 22,
-          "description": "The class \u0027Reference\u0027 is suspected to be a Data Class (WOC\u003d4.545%, NOPA\u003d0, NOAM\u003d21, WMC\u003d22)",
-          "rule": "DataClass",
-          "ruleset": "Design",
-          "priority": 3,
-          "externalInfoUrl": "https://docs.pmd-code.org/pmd-doc-7.9.0/pmd_rules_java_design.html#dataclass"
         }
       ]
     },
