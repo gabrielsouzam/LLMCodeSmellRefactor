@@ -14,22 +14,11 @@ public class RegistrySearch implements Search<String>{
 
     @Override
     public List<String> search(String text) {
-        return handleRegistrySearch(text);
+        List<String> results = searchLog.searchInRegistry(text);
+        return results;
     }
 
     public SearchLog getSearchLog() {
         return searchLog;
-    }
-
-    private List<String> handleRegistrySearch(String text){
-        List<String> results = new ArrayList<>();
-        results.addAll(CardManager.getCardManager().searchInCards(text));
-        results.addAll(HabitTracker.getHabitTracker().searchInHabits(text));
-        results.addAll(TodoTracker.getInstance().searchInTodos(text));
-        results.addAll(StudyTaskManager.getStudyTaskManager().searchInRegistries(text));
-        this.searchLog.addSearchHistory(text);
-        this.searchLog.setNumUsages(this.searchLog.getNumUsages() + 1);
-        results.add("\nLogged in: " + this.searchLog.getLogName());
-        return results;
     }
 }

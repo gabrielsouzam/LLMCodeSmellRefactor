@@ -1,5 +1,10 @@
 package org.example.studysearch;
 
+import org.example.studycards.CardManager;
+import org.example.studyplanner.HabitTracker;
+import org.example.studyplanner.TodoTracker;
+import org.example.studyregistry.StudyTaskManager;
+
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -17,6 +22,18 @@ public class SearchLog {
         this.logName = logName;
         numUsages = 0;
         isLocked = false;
+    }
+
+    public List<String> searchInRegistry(String text){
+        List<String> results = new ArrayList<>();
+        results.addAll(CardManager.getCardManager().searchInCards(text));
+        results.addAll(HabitTracker.getHabitTracker().searchInHabits(text));
+        results.addAll(TodoTracker.getInstance().searchInTodos(text));
+        results.addAll(StudyTaskManager.getStudyTaskManager().searchInRegistries(text));
+        addSearchHistory(text);
+        setNumUsages(getNumUsages() + 1);
+        results.add("\nLogged in: " + this.getLogName());
+        return results;
     }
 
     public void logSearch(String text) {
