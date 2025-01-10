@@ -18,6 +18,12 @@ public class SearchLog {
         numUsages = 0;
         isLocked = false;
     }
+
+    public void logSearch(String text) {
+        addSearchHistory(text);
+        setNumUsages(getNumUsages() + 1);
+    }
+
     public void addSearchHistory(String searchHistory) {
         this.searchHistory.add(searchHistory);
     }
