@@ -115,8 +115,20 @@ public class StudyRegistryController {
                 "String title, String description, String link, String accessRights, String license, String language, int rating, " +
                 "int viewCount, int shareCount \n");
         AudioReference.AudioQuality quality =AudioReference.audioQualityAdapter(getInput());
-        audioReference.editAudio(quality, Boolean.parseBoolean(getInput()), getInput(), getInput(), getInput(), getInput(),
-                getInput(), getInput(), Integer.parseInt(getInput()), Integer.parseInt(getInput()), Integer.parseInt(getInput()));
+        boolean isDownloadable = Boolean.parseBoolean(getInput());
+        AudioReference.AudioEditDetails details = new AudioReference.AudioEditDetails(
+                getInput(), // title
+                getInput(), // description
+                getInput(), // link
+                getInput(), // accessRights
+                getInput(), // license
+                getInput(), // language
+                Integer.parseInt(getInput()), // rating
+                Integer.parseInt(getInput()), // viewCount
+                Integer.parseInt(getInput()) // shareCount
+        );
+
+        audioReference.editAudio(quality, isDownloadable, details);
     }
 
     private AudioReference addAudioReference(){
