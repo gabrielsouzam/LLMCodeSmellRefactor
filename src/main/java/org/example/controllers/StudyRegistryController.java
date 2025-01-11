@@ -7,10 +7,7 @@ import org.example.studymaterial.VideoReference;
 import org.example.studyregistry.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.example.controllers.MainController.getInput;
 import static org.example.controllers.MainController.validateInput;
@@ -51,15 +48,71 @@ public class StudyRegistryController {
         studyTaskManager.addRegistry(task);
     }
 
-    private void handleSetObjective(StudyObjective objective){
+    private void handleSetObjective(StudyObjective objective) {
         handleMethodHeader("(Study Objective Edit)");
-        System.out.println("Type the following info: Integer id, Integer priority " +
-                "Integer practicedDays, int day, int month, int year, String name, String title, String description, " +
-                "String topic, String objectiveInOneLine, String objectiveFullDescription, String motivation, " +
-                "Double duration, boolean isActive  \n");
-        objective.handleSetObjective(Integer.parseInt(getInput()), Integer.parseInt(getInput()),Integer.parseInt(getInput()),Integer.parseInt(getInput()),Integer.parseInt(getInput()),
-                Integer.parseInt(getInput()), getInput(), getInput(), getInput(), getInput(), getInput(), getInput(), getInput(),
-                Double.parseDouble(getInput()), Boolean.parseBoolean(getInput()));
+
+        StudyObjective.ObjectiveBuilderData data = collectObjectiveData();
+        StudyObjective.ObjectiveBuilderDetails details = collectObjectiveDetails();
+        boolean isActive = getBooleanInput("Is Active (true/false)");
+
+        objective.handleSetObjective(data, details, isActive);
+    }
+
+    private StudyObjective.ObjectiveBuilderData collectObjectiveData() {
+        Integer id = getIntInput("ID");
+        Integer priority = getIntInput("Priority");
+        Integer practicedDays = getIntInput("Practiced Days");
+        int day = getIntInput("Day");
+        int month = getIntInput("Month");
+        int year = getIntInput("Year");
+        return new StudyObjective.ObjectiveBuilderData(id, priority, practicedDays, day, month, year);
+    }
+
+    private StudyObjective.ObjectiveBuilderDetails collectObjectiveDetails() {
+        String name = getInput();
+        String title = getInput();
+        String description = getInput();
+        String topic = getInput();
+        String objectiveInOneLine = getInput();
+        String objectiveFullDescription = getInput();
+        String motivation = getInput();
+        Double duration = getDoubleInput("Duration");
+        return new StudyObjective.ObjectiveBuilderDetails(name, title, description, topic, objectiveInOneLine, objectiveFullDescription, motivation, duration, false);
+    }
+    private int getIntInput(String prompt) {
+        while (true) {
+            try {
+                System.out.print(prompt + ": ");
+                return Integer.parseInt(scanner.nextLine());
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter an integer.");
+            }
+        }
+    }
+
+    private double getDoubleInput(String prompt) {
+        while (true) {
+            try {
+                System.out.print(prompt + ": ");
+                return Double.parseDouble(scanner.nextLine());
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a number.");
+            }
+        }
+    }
+
+    private boolean getBooleanInput(String prompt) {
+        while (true) {
+            System.out.print(prompt + ": ");
+            String input = scanner.nextLine().toLowerCase();
+            if (input.equals("true")) {
+                return true;
+            } else if (input.equals("false")) {
+                return false;
+            } else {
+                System.out.println("Invalid input. Please enter 'true' or 'false'.");
+            }
+        }
     }
 
     private StudyObjective getStudyObjectiveInfo(){
@@ -82,16 +135,27 @@ public class StudyRegistryController {
         studyTaskManager.addRegistry(plan);
         return plan;
     }
+    private String getUserInput(String prompt) {
+        System.out.print(prompt + ": ");
+        return scanner.nextLine();
+    }
 
-    private void handleSetSteps(StudyPlan studyPlan){
+    // Assuming you have a Scanner object
+    private Scanner scanner = new Scanner(System.in);
+
+
+
+    private void handleSetSteps(StudyPlan studyPlan) {
         handleMethodHeader("(Study Plan Edit)");
-        System.out.println("Type the following info: String firstStep, String resetStudyMechanism, String consistentStep, " +
-                "String seasonalSteps, String basicSteps, String mainObjectiveTitle, String mainGoalTitle, String mainMaterialTopic, " +
-                "String mainTask, @NotNull  Integer numberOfSteps, boolean isImportant. " +
-                "The Date to start is today, the date to end is x days from now, type the quantity of days\n");
+
+        // Agora utilize o método fromUserInput da classe StepDetails
+        StudyPlan.StepDetails stepDetails = new StudyPlan.StepDetails().fromUserInput(scanner);
+
         LocalDateTime createdAT = LocalDateTime.now();
-        studyPlan.assignSteps(getInput(), getInput(), getInput(), getInput(), getInput(), getInput(), getInput(), getInput(), getInput(),
-                Integer.parseInt(getInput()), Boolean.parseBoolean(getInput()), createdAT, createdAT.plusDays(Long.parseLong(getInput())));
+        stepDetails.setStartDate(createdAT);
+        stepDetails.setEndDate(createdAT.plusDays(Long.parseLong(getUserInput("Enter number of days to end"))));
+
+        studyPlan.assignSteps(stepDetails);
     }
 
     private StudyGoal getStudyGoalInfo(){
@@ -225,3 +289,4 @@ public class StudyRegistryController {
                """);
     }
 }
+
