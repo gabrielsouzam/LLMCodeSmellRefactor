@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Scanner;
 
 public class StudyPlan extends Registry{
     private StudyObjective objective;
@@ -37,16 +38,180 @@ public class StudyPlan extends Registry{
         steps.add(toAdd);
     }
 
-    public void assignSteps(String firstStep, String resetStudyMechanism, String consistentStep, String seasonalSteps,
-                            String basicSteps, String mainObjectiveTitle, String mainGoalTitle, String mainMaterialTopic,
-                            String mainTask, Integer numberOfSteps, boolean isImportant, LocalDateTime startDate, LocalDateTime endDate) {
+    public void assignSteps(StepDetails stepDetails) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-
-        this.steps = new ArrayList<>(Arrays.asList(firstStep, resetStudyMechanism, consistentStep, seasonalSteps, basicSteps, "Number of steps: " + numberOfSteps.toString(), "Is it important to you? " + isImportant, startDate.format(formatter), endDate.format(formatter), mainObjectiveTitle, mainGoalTitle, mainMaterialTopic, mainTask));
+        this.steps = new ArrayList<>(Arrays.asList(
+                stepDetails.getFirstStep(),
+                stepDetails.getResetStudyMechanism(),
+                stepDetails.getConsistentStep(),
+                stepDetails.getSeasonalSteps(),
+                stepDetails.getBasicSteps(),
+                "Number of steps: " + stepDetails.getNumberOfSteps().toString(),
+                "Is it important to you? " + stepDetails.isImportant(),
+                stepDetails.getStartDate().format(formatter),
+                stepDetails.getEndDate().format(formatter),
+                stepDetails.getMainObjectiveTitle(),
+                stepDetails.getMainGoalTitle(),
+                stepDetails.getMainMaterialTopic(),
+                stepDetails.getMainTask()
+        ));
     }
 
-    public void handleAssignSteps(List<String> stringProperties, Integer numberOfSteps, boolean isImportant, LocalDateTime startDate, LocalDateTime endDate){
-        assignSteps(stringProperties.get(0), stringProperties.get(1), stringProperties.get(2), stringProperties.get(3), stringProperties.get(4), stringProperties.get(5), stringProperties.get(6), stringProperties.get(7), stringProperties.get(8), numberOfSteps, isImportant, startDate, endDate);
+    public void handleAssignSteps(List<String> stringProperties, Integer numberOfSteps, boolean isImportant, LocalDateTime startDate, LocalDateTime endDate) {
+        StepDetails stepDetails = new StepDetails()
+                .setFirstStep(stringProperties.get(0))
+                .setResetStudyMechanism(stringProperties.get(1))
+                .setConsistentStep(stringProperties.get(2))
+                .setSeasonalSteps(stringProperties.get(3))
+                .setBasicSteps(stringProperties.get(4))
+                .setMainObjectiveTitle(stringProperties.get(5))
+                .setMainGoalTitle(stringProperties.get(6))
+                .setMainMaterialTopic(stringProperties.get(7))
+                .setMainTask(stringProperties.get(8))
+                .setNumberOfSteps(numberOfSteps)
+                .setImportant(isImportant)
+                .setStartDate(startDate)
+                .setEndDate(endDate);
+        assignSteps(stepDetails);
+    }
+
+    public static class StepDetails {
+        private String firstStep;
+        private String resetStudyMechanism;
+        private String consistentStep;
+        private String seasonalSteps;
+        private String basicSteps;
+        private String mainObjectiveTitle;
+        private String mainGoalTitle;
+        private String mainMaterialTopic;
+        private String mainTask;
+        private Integer numberOfSteps;
+        private boolean important;
+        private LocalDateTime startDate;
+        private LocalDateTime endDate;
+        public StepDetails setFirstStep(String firstStep) {
+            this.firstStep = firstStep;
+            return this;
+        }
+        public StepDetails setResetStudyMechanism(String resetStudyMechanism) {
+            this.resetStudyMechanism = resetStudyMechanism;
+            return this;
+        }
+        public StepDetails setConsistentStep(String consistentStep) {
+            this.consistentStep = consistentStep;
+            return this;
+        }
+        public StepDetails setSeasonalSteps(String seasonalSteps) {
+            this.seasonalSteps = seasonalSteps;
+            return this;
+        }
+        public StepDetails setBasicSteps(String basicSteps) {
+            this.basicSteps = basicSteps;
+            return this;
+        }
+        public StepDetails setMainObjectiveTitle(String mainObjectiveTitle) {
+            this.mainObjectiveTitle = mainObjectiveTitle;
+            return this;
+        }
+        public StepDetails setMainGoalTitle(String mainGoalTitle) {
+            this.mainGoalTitle = mainGoalTitle;
+            return this;
+        }
+        public StepDetails setMainMaterialTopic(String mainMaterialTopic) {
+            this.mainMaterialTopic = mainMaterialTopic;
+            return this;
+        }
+        public StepDetails setMainTask(String mainTask) {
+            this.mainTask = mainTask;
+            return this;
+        }
+        public StepDetails setNumberOfSteps(Integer numberOfSteps) {
+            this.numberOfSteps = numberOfSteps;
+            return this;
+        }
+        public StepDetails setImportant(boolean important) {
+            this.important = important;
+            return this;
+        }
+        public StepDetails setStartDate(LocalDateTime startDate) {
+            this.startDate = startDate;
+            return this;
+        }
+        public StepDetails setEndDate(LocalDateTime endDate) {
+            this.endDate = endDate;
+            return this;
+        }
+        public String getFirstStep() {
+            return firstStep;
+        }
+        public String getResetStudyMechanism() {
+            return resetStudyMechanism;
+        }
+        public String getConsistentStep() {
+            return consistentStep;
+        }
+        public String getSeasonalSteps() {
+            return seasonalSteps;
+        }
+        public String getBasicSteps() {
+            return basicSteps;
+        }
+        public String getMainObjectiveTitle() {
+            return mainObjectiveTitle;
+        }
+        public String getMainGoalTitle() {
+            return mainGoalTitle;
+        }
+        public String getMainMaterialTopic() {
+            return mainMaterialTopic;
+        }
+        public String getMainTask() {
+            return mainTask;
+        }
+        public Integer getNumberOfSteps() {
+            return numberOfSteps;
+        }
+        public boolean isImportant() {
+            return important;
+        }
+        public LocalDateTime getStartDate() {
+            return startDate;
+        }
+        public LocalDateTime getEndDate() {
+            return endDate;
+        }
+
+
+        public StepDetails fromUserInput(Scanner scanner) {
+            this.setBasicInfo(scanner);
+            this.setCoreStudyPlanDetails(scanner);
+            this.setAdditionalDetails(scanner);
+            return this;
+        }
+
+        private void setBasicInfo(Scanner scanner) {
+            this.setFirstStep(getUserInput(scanner, "Enter first step"));
+            this.setResetStudyMechanism(getUserInput(scanner, "Enter reset study mechanism"));
+            this.setConsistentStep(getUserInput(scanner, "Enter consistent step"));
+            this.setSeasonalSteps(getUserInput(scanner, "Enter seasonal steps"));
+            this.setBasicSteps(getUserInput(scanner, "Enter basic steps"));
+        }
+
+        private void setCoreStudyPlanDetails(Scanner scanner) {
+            this.setMainObjectiveTitle(getUserInput(scanner, "Enter main objective title"));
+            this.setMainGoalTitle(getUserInput(scanner, "Enter main goal title"));
+            this.setMainMaterialTopic(getUserInput(scanner, "Enter main material topic"));
+            this.setMainTask(getUserInput(scanner, "Enter main task"));
+        }
+
+        private void setAdditionalDetails(Scanner scanner) {
+            this.setNumberOfSteps(Integer.parseInt(getUserInput(scanner, "Enter number of steps")));
+            this.setImportant(Boolean.parseBoolean(getUserInput(scanner, "Is it important? (true/false)")));
+        }
+        private String getUserInput(Scanner scanner, String prompt) {
+            System.out.print(prompt + ": ");
+            return scanner.nextLine();
+        }
     }
 
 }
