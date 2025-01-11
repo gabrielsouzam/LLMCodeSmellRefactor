@@ -27,17 +27,38 @@ public class StudyTaskManager {
         return weekResponsibilities;
     }
 
-    public void setUpWeek(String planName, String objectiveTitle, String objectiveDescription, String materialTopic,
-                          String materialFormat, String goal, String reminderTitle, String reminderDescription,
-                          String mainTaskTitle, String mainHabit, String mainCardStudy){
+    public void setUpWeek(WeekSetupParams params) {
         this.weekResponsibilities = new ArrayList<>();
-        this.weekResponsibilities.addAll(Arrays.asList(planName, objectiveTitle, objectiveDescription, materialTopic, materialFormat, goal, reminderTitle, reminderDescription, mainTaskTitle, mainHabit, mainCardStudy));
+        this.weekResponsibilities.addAll(Arrays.asList(
+                params.planName,
+                params.objectiveTitle,
+                params.objectiveDescription,
+                params.materialTopic,
+                params.materialFormat,
+                params.goal,
+                params.reminderTitle,
+                params.reminderDescription,
+                params.mainTaskTitle,
+                params.mainHabit,
+                params.mainCardStudy
+        ));
     }
 
     public void handleSetUpWeek(List<String> stringProperties){
-        setUpWeek(stringProperties.get(0), stringProperties.get(1), stringProperties.get(2), stringProperties.get(3),
-                stringProperties.get(4), stringProperties.get(5), stringProperties.get(6), stringProperties.get(7),
-                stringProperties.get(8), stringProperties.get(9), stringProperties.get(10));
+        WeekSetupParams params = new WeekSetupParams(
+                stringProperties.get(0), // planName
+                stringProperties.get(1), // objectiveTitle
+                stringProperties.get(2), // objectiveDescription
+                stringProperties.get(3), // materialTopic
+                stringProperties.get(4), // materialFormat
+                stringProperties.get(5), // goal
+                stringProperties.get(6), // reminderTitle
+                stringProperties.get(7), // reminderDescription
+                stringProperties.get(8), // mainTaskTitle
+                stringProperties.get(9), // mainHabit
+                stringProperties.get(10) // mainCardStudy
+        );
+        setUpWeek(params);
     }
 
 
@@ -60,6 +81,21 @@ public class StudyTaskManager {
             }
         }
         return response;
+    }
+
+    public record WeekSetupParams(
+            String planName,
+            String objectiveTitle,
+            String objectiveDescription,
+            String materialTopic,
+            String materialFormat,
+            String goal,
+            String reminderTitle,
+            String reminderDescription,
+            String mainTaskTitle,
+            String mainHabit,
+            String mainCardStudy
+    ) {
     }
 
 }
